@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full dark">
+    {% load static %}  
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpeakSpace</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% block styles %}
+    {% endblock %}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4F46E5',
+                        secondary: '#10B981',
+                        dark: '#1F2937',
+                        darkgray: '#1F2937',
+                        darktext: '#111827',
+                        lighttext: '#F9FAFB',
+                        secondarydark: '#4B5563',
+                        secondarylight: '#FFFFFF',
+                        lightbg: '#F9FAFB',
+                        secondarybg: '#FFFFFF',
+                        tertiarybg: '#F3F4F6',
+                        darkbg: '#111827',
+                        secondarydarkbg: '#1F2937',
+                        tertiarydarkbg: '#374151'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="h-full bg-gray-50 dark:bg-gray-900 dark:text-white">
+    {% block content %}
+    {% endblock %}
+</body>
+{% block scripts %}
+{% endblock %}
+</html>

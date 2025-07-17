@@ -1,0 +1,105 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block styles %}
+<style>
+    .schedule-item-enter {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    .schedule-item-enter-active {
+        opacity: 1;
+        transform: translateY(0);
+        transition: opacity 300ms, transform 300ms;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="flex h-screen">
+    {% include 'navbar.html' %}
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+        <!-- Header -->
+        <header class="bg-secondarybg dark:bg-secondarydarkbg p-4 border-b border-lightborder dark:border-darkborder flex justify-between items-center">
+            <h1 class="text-xl font-semibold">Set Your Availability</h1>
+            
+            <!-- Dark mode toggle -->
+            <button onclick="document.documentElement.classList.toggle('dark')" 
+                    class="p-2 rounded-full bg-tertiarybg dark:bg-tertiarydarkbg text-secondarydark dark:text-secondarylight transition-all hover:scale-110">
+                <svg class="w-6 h-6 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <svg class="w-6 h-6 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            </button>
+        </header>
+
+        <!-- Main Content Area -->
+        <div class="p-6 flex-1 overflow-y-auto">
+            <div class="max-w-7xl mx-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Add Availability Form -->
+                    <div class="bg-secondarybg dark:bg-secondarydarkbg rounded-lg shadow-md p-6">
+                        <h2 class="text-lg font-semibold mb-6">Add New Availability</h2>
+                        <form id="availabilityForm" class="space-y-4">
+                            {% csrf_token %}
+                            <div>
+                                <label for="topic" class="block text-sm font-medium mb-2">Topic</label>
+                                <select id="topic" name="topic" required
+                                    class="w-full p-2 rounded-lg border border-lightborder dark:border-darkborder bg-tertiarybg dark:bg-tertiarydarkbg focus:ring-2 focus:ring-primary">
+                                    <option value="">Select a topic</option>
+                                    {% for topic in topics %}
+                                    <option value="{{ topic.title }}">{{ topic.title }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="date" class="block text-sm font-medium mb-2">Date</label>
+                                <input type="date" id="date" name="date" required
+                                    class="w-full p-2 rounded-lg border border-lightborder dark:border-darkborder bg-tertiarybg dark:bg-tertiarydarkbg focus:ring-2 focus:ring-primary">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label for="startTime" class="block text-sm font-medium mb-2">Start Time</label>
+                                    <input type="time" id="startTime" name="startTime" required
+                                        class="w-full p-2 rounded-lg border border-lightborder dark:border-darkborder bg-tertiarybg dark:bg-tertiarydarkbg focus:ring-2 focus:ring-primary">
+                                </div>
+                                <div>
+                                    <label for="endTime" class="block text-sm font-medium mb-2">End Time</label>
+                                    <input type="time" id="endTime" name="endTime" required
+                                        class="w-full p-2 rounded-lg border border-lightborder dark:border-darkborder bg-tertiarybg dark:bg-tertiarydarkbg focus:ring-2 focus:ring-primary">
+                                </div>
+                            </div>
+
+                            <button type="submit"
+                                class="w-full bg-primary text-white py-3 rounded-lg hover:bg-opacity-90 transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                                Add Time Slot
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Schedule Display -->
+                    <div class="bg-secondarybg dark:bg-secondarydarkbg rounded-lg shadow-md p-6">
+                        <h2 class="text-lg font-semibold mb-6">Your Schedule</h2>
+                        <div id="scheduleList" class="space-y-4">
+                            <!-- Schedule items will be loaded dynamically via JavaScript -->
+                            <p class="text-center text-gray-500 dark:text-gray-400 py-4">
+                                Loading your schedule...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/available-timing.js' %}"></script>
+{% endblock %}

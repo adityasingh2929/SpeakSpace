@@ -1,0 +1,64 @@
+{% extends "main.html" %}
+{% load static %}
+{% block styles %}
+
+{% endblock %}
+{% block content %}
+<div class="flex h-screen font-[Poppins] text-darktext dark:text-lighttext transition-colors duration-300">
+    <!-- Sidebar -->
+    {% include 'base/slidebarp.html' %}
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+        <!-- Header -->
+        <header class="bg-secondarybg dark:bg-secondarydarkbg p-4 border-b border-lightborder dark:border-darkborder flex justify-between items-center">
+            <h1 class="text-xl font-semibold">Apply for Session</h1>
+            <button onclick="document.documentElement.classList.toggle('dark')" 
+                    class="p-2 rounded-full bg-tertiarybg dark:bg-tertiarydarkbg text-secondarydark dark:text-secondarylight transition-all hover:scale-110">
+                <i class="fas fa-moon dark:hidden"></i>
+                <i class="fas fa-sun hidden dark:block"></i>
+            </button>
+        </header>
+
+        <!-- Application Content -->
+        <!-- ... existing code ... -->
+<div class="flex-1 p-6 overflow-y-auto space-y-6">
+    {% for topic in topics %}
+    <div class="bg-secondarybg dark:bg-secondarydarkbg rounded-lg shadow-md p-6 border border-lightborder dark:border-darkborder">
+        <div class="flex justify-between items-start">
+            <div>
+                <h2 class="text-lg font-semibold mb-2">{{ topic.title }}</h2>
+                <p class="text-secondarydark dark:text-secondarylight mb-4">{{ topic.description }}</p>
+            </div>
+            <div class="flex items-center gap-4">
+                {% if topic.interview_status %}
+                    <span class="px-4 py-2 rounded-lg 
+                        {% if topic.interview_status == 'pending' %}bg-warning/20 text-warning
+                        {% elif topic.interview_status == 'approved' %}bg-success/20 text-success
+                        {% else %}bg-error/20 text-error{% endif %}">
+                        {{ topic.interview_status|title }}
+                    </span>
+                {% else %}
+                    <form method="POST" class="flex items-center gap-4" action="{% url 'apply-sessions' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="topic_id" value="{{ topic.id }}">
+                        <input type="datetime-local" name="preferred_date" required 
+                               class="px-4 py-2 rounded-lg border border-lightborder dark:border-darkborder bg-tertiarybg dark:bg-tertiarydarkbg text-darktext dark:text-lighttext focus:outline-none focus:border-primary">
+                        <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                            Apply
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<!-- ... existing code ... -->
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Add JS if needed -->
+{% endblock %}

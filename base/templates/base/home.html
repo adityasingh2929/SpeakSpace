@@ -1,0 +1,235 @@
+{% extends 'main.html' %}
+{% load static %} 
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+{% block content %}
+<!-- Loader -->
+<div class="loader-container" id="loader">
+    <span class="loader"></span>
+</div>
+
+<div class="flex h-screen">
+    {% include 'base/slidebarp.html' %}
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+        <!-- Header -->
+        <header class="bg-secondarybg dark:bg-secondarydarkbg p-4 border-b border-lightborder dark:border-darkborder flex justify-between items-center">
+            <h1 class="text-xl font-semibold">Home Page</h1>
+            
+            <!-- Dark mode toggle button -->
+            <button onclick="document.documentElement.classList.toggle('dark')" 
+                    class="p-2 rounded-full bg-tertiarybg dark:bg-tertiarydarkbg text-secondarydark dark:text-secondarylight transition-all hover:scale-110">
+                <svg class="w-6 h-6 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <svg class="w-6 h-6 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            </button>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="flex-1 p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Sessions Card -->
+            <div class="bg-secondarybg dark:bg-secondarydarkbg rounded-lg shadow-md p-6 border border-lightborder dark:border-darkborder">
+                <h2 class="text-lg font-semibold mb-4">Sessions</h2>
+                
+                <!-- Pending Session Proposals -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">Pending Proposals</h3>
+                    {% for session in proposed_sessions %}
+                    <div class="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4 mb-4">
+                        <div class="flex flex-col">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-semibold text-lg">{{ session.topic.title }}</h4>
+                                <span class="bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 text-xs px-2 py-1 rounded-full">{{ session.status|title }}</span>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                                <span class="block"><strong>Evaluator:</strong> {{ session.selector.get_full_name }}</span>
+                                <span class="block"><strong>Time:</strong> {{ session.start_time|date:"M j, Y H:i" }}</span>
+                                <span class="block"><strong>Duration:</strong> {{ session.duration_minutes }} minutes</span>
+                            </p>
+                            <div class="flex gap-2 justify-end">
+                                <form method="POST" action="{% url 'confirm_session' session.id %}" class="inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm">
+                                        Accept
+                                    </button>
+                                </form>
+                                <form method="POST" action="{% url 'decline_session' session.id %}" class="inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm">
+                                        Decline
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-gray-500 dark:text-gray-400 text-center py-4">No pending session proposals</p>
+                    {% endfor %}
+                </div>
+                
+                <!-- Confirmed Sessions -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">Confirmed Sessions</h3>
+                    {% for session in confirmed_sessions %}
+                    <div class="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-lg p-4 mb-4">
+                        <div class="flex flex-col">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-semibold text-lg">{{ session.topic.title }}</h4>
+                                <span class="bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200 text-xs px-2 py-1 rounded-full">{{ session.status|title }}</span>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                                <span class="block"><strong>Evaluator:</strong> {{ session.selector.get_full_name }}</span>
+                                <span class="block"><strong>Time:</strong> {{ session.start_time|date:"M j, Y H:i" }}</span>
+                                <span class="block"><strong>Duration:</strong> {{ session.duration_minutes }} minutes</span>
+                                {% if session.meeting_link %}
+                                    <span class="block mt-2">
+                                        <strong>Meeting Link:</strong> 
+                                        <a href="{{ session.meeting_link }}" 
+                                        id="meeting-link-{{ session.id }}"
+                                        target="_blank" 
+                                        class="text-primary hover:underline disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:no-underline"
+                                        data-start-time="{{ session.start_time|date:'Y-m-d H:i:s' }}"
+                                        {% if session.start_time > current_time %}disabled{% endif %}>
+                                            Join Meeting
+                                        </a>
+                                        <span id="countdown-{{ session.id }}" class="text-sm text-gray-500 ml-2">
+                                            {% if session.start_time > current_time %}
+                                            (Starts in: calculating...)
+                                            {% endif %}
+                                        </span>
+                                    </span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-gray-500 dark:text-gray-400 text-center py-4">No confirmed sessions</p>
+                    {% endfor %}
+                </div>
+                
+
+            <!-- Chat Room Card -->
+            <div class="bg-secondarybg dark:bg-secondarydarkbg rounded-lg shadow-md p-6 border border-lightborder dark:border-darkborder">
+                <h2 class="text-lg font-semibold mb-4">Chat Rooms</h2>
+                <p class="text-secondarydark dark:text-secondarylight mb-4">Join topic-specific discussions and practice your communication skills</p>
+                
+                <!-- Topics/Chat Rooms List -->
+                <div class="space-y-3">
+                    {% for topic in topics %}
+                    <div class="p-4 border border-lightborder dark:border-darkborder rounded-lg hover:bg-tertiarybg dark:hover:bg-tertiarydarkbg transition-colors">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="font-semibold">{{ topic.title }}</h3>
+                                {% if topic.description %}
+                                <p class="text-sm text-secondarydark dark:text-secondarylight mt-1">{{ topic.description }}</p>
+                                {% endif %}
+                            </div>
+                            {% if topic.id in joined_topic_ids %}
+                                <a href="{% url 'chat_room' %}?topic={{ topic.id }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors text-sm">
+                                    Joined
+                                </a>
+                            {% else %}
+                                <a href="{% url 'chat_room' %}?topic={{ topic.id }}" class="bg-primary hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors text-sm">
+                                    Join Chat
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-center text-secondarydark dark:text-secondarylight">No chat rooms available</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{% static 'js/meeting.js' %}"></script>
+<script>
+    // Check for user's preferred color scheme
+    if (localStorage.getItem('darkMode') === 'true' || 
+        (!localStorage.getItem('darkMode') && 
+         window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+
+    // Save user preference when toggling dark mode
+    document.querySelector('[onclick="document.documentElement.classList.toggle(\'dark\')"]')
+        .addEventListener('click', function() {
+            localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
+        });
+    
+    // User profile photo upload functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const loader = document.getElementById('loader');
+        const fileInput = document.getElementById('photoUpload');
+        const userPhotoImg = document.getElementById('userPhoto');
+        const photoContainer = document.querySelector('.w-24.h-24.rounded-full');
+        
+        // Handle click on photo container
+        photoContainer.addEventListener('click', function() {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    alert('Please select an image file');
+                    return;
+                }
+                
+                // Validate file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Image size should be less than 5MB');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('image', file);
+                formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+                // Show loader
+                loader.classList.remove('loader-hidden');
+
+                fetch('{% url "update-user-image" %}', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update image with cache-busting parameter
+                        userPhotoImg.src = data.image_url + '?t=' + new Date().getTime();
+                    } else {
+                        alert(data.error || 'Failed to upload image. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while uploading the image.');
+                })
+                .finally(() => {
+                    loader.classList.add('loader-hidden');
+                    // Reset file input
+                    fileInput.value = '';
+                });
+            }
+        });
+    });
+    
+    window.addEventListener('load', function() {
+        const loader = document.getElementById('loader');
+        loader.classList.add('loader-hidden');
+    });
+</script>
+
+{% endblock %}

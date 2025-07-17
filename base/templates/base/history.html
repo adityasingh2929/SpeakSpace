@@ -1,0 +1,95 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/history.css' %}"> 
+{% endblock %}
+{% block content %}
+<div class="flex h-screen">
+    {% include 'navbar.html' %}
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+        <!-- Header -->
+        <header class="bg-secondarybg dark:bg-secondarydarkbg p-4 border-b border-lightborder dark:border-darkborder flex justify-between items-center">
+            <h1 class="text-xl font-semibold">History</h1>
+            
+            <!-- Dark mode toggle -->
+            <button onclick="document.documentElement.classList.toggle('dark')" 
+                    class="p-2 rounded-full bg-tertiarybg dark:bg-tertiarydarkbg text-secondarydark dark:text-secondarylight transition-all hover:scale-110">
+                <svg class="w-6 h-6 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <svg class="w-6 h-6 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            </button>
+        </header>
+
+        <!-- History Content -->
+        <div class="p-6">
+            <!-- History Cards Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Recent Sessions -->
+                <div class="bg-secondarybg dark:bg-secondarydarkbg rounded-lg shadow-md p-6 border border-lightborder dark:border-darkborder">
+                    <h2 class="text-lg font-semibold mb-4">Recent Sessions</h2>
+                    <div class="space-y-4">
+                        <!-- Session History Item -->
+                        <div class="p-4 border border-lightborder dark:border-darkborder rounded-lg">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-semibold">Public Speaking Basics</h3>
+                                    <p class="text-sm text-secondarydark dark:text-secondarylight mt-1">Student: John Doe</p>
+                                    <p class="text-sm text-secondarydark dark:text-secondarylight mt-1">January 15, 2024 - 10:00 AM</p>
+                                </div>
+                                <span class="px-3 py-1 text-sm rounded-full bg-success/20 text-success">Completed</span>
+                            </div>
+                        </div>
+
+                        <!-- Another Session History Item -->
+                        <div class="p-4 border border-lightborder dark:border-darkborder rounded-lg">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-semibold">Interview Preparation</h3>
+                                    <p class="text-sm text-secondarydark dark:text-secondarylight mt-1">Student: Jane Smith</p>
+                                    <p class="text-sm text-secondarydark dark:text-secondarylight mt-1">January 14, 2024 - 2:00 PM</p>
+                                </div>
+                                <span class="px-3 py-1 text-sm rounded-full bg-error/20 text-error">Cancelled</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Card -->
+                <div class="bg-secondarybg dark:bg-secondarydarkbg rounded-lg shadow-md p-6 border border-lightborder dark:border-darkborder">
+                    <h2 class="text-lg font-semibold mb-4">Session Statistics</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Total Sessions -->
+                        <div class="p-4 bg-tertiarybg dark:bg-tertiarydarkbg rounded-lg">
+                            <h3 class="text-sm text-secondarydark dark:text-secondarylight">Total Sessions</h3>
+                            <p class="text-2xl font-semibold mt-1">24</p>
+                        </div>
+
+                        <!-- Completed Sessions -->
+                        <div class="p-4 bg-tertiarybg dark:bg-tertiarydarkbg rounded-lg">
+                            <h3 class="text-sm text-secondarydark dark:text-secondarylight">Completed</h3>
+                            <p class="text-2xl font-semibold mt-1 text-success">20</p>
+                        </div>
+
+                        <!-- Cancelled Sessions -->
+                        <div class="p-4 bg-tertiarybg dark:bg-tertiarydarkbg rounded-lg">
+                            <h3 class="text-sm text-secondarydark dark:text-secondarylight">Cancelled</h3>
+                            <p class="text-2xl font-semibold mt-1 text-error">4</p>
+                        </div>
+
+                        <!-- Average Rating -->
+                        <div class="p-4 bg-tertiarybg dark:bg-tertiarydarkbg rounded-lg">
+                            <h3 class="text-sm text-secondarydark dark:text-secondarylight">Average Rating Given</h3>
+                            <p class="text-2xl font-semibold mt-1 text-warning">4.5</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

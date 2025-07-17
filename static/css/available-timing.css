@@ -1,0 +1,90 @@
+.profile-container {
+    width: 6rem;
+    height: 6rem;
+    border-radius: 9999px;
+    border: 2px solid #4F46E5;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+}
+
+.profile-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(17, 24, 39, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.profile-container:hover .photo-overlay {
+    opacity: 1;
+}
+
+.nav-link {
+    display: block;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #E5E7EB;
+    transition: all 0.3s;
+}
+
+.dark .nav-link {
+    border-color: #4B5563;
+}
+
+.nav-link:hover {
+    background-color: #F3F4F6;
+}
+
+.dark .nav-link:hover {
+    background-color: #374151;
+}
+
+
+
+.border-lightborder {
+    border-color: #E5E7EB;
+}
+
+.dark .border-darkborder {
+    border-color: #4B5563;
+}
+
+.text-error {
+    color: #EF4444;
+}
+
+.text-error:hover {
+    opacity: 0.8;
+}
+
+input[type="date"],
+input[type="time"],
+select {
+    color: inherit;
+}
+
+.dark input[type="date"],
+.dark input[type="time"],
+.dark select {
+    background-color: #374151;
+    border-color: #4B5563;
+    color: #F9FAFB;
+}
+
+.dark input[type="date"]:focus,
+.dark input[type="time"]:focus,
+.dark select:focus {
+    border-color: #4F46E5;
+    outline: none;
+    ring-color: #4F46E5;
+}
